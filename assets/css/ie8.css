@@ -1,74 +1,73 @@
 /*
-	Strata by HTML5 UP
+	Phantom by HTML5 UP
 	html5up.net | @ajlkn
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
+
+/* Form */
+
+	form .field {
+		float: none !important;
+		width: 100% !important;
+		padding-left: 0 !important;
+	}
 
 /* Button */
 
 	input[type="submit"],
 	input[type="reset"],
 	input[type="button"],
+	button,
 	.button {
-		position: relative;
-		-ms-behavior: url("assets/js/ie/PIE.htc");
+		border: solid 2px #585858 !important;
 	}
 
-/* Form */
+		input[type="submit"]:hover,
+		input[type="reset"]:hover,
+		input[type="button"]:hover,
+		button:hover,
+		.button:hover {
+			border-color: #f2849e !important;
+		}
 
-	input[type="text"],
-	input[type="password"],
-	input[type="email"],
-	select,
-	textarea {
-		position: relative;
-		-ms-behavior: url("assets/js/ie/PIE.htc");
-	}
+		input[type="submit"].special,
+		input[type="reset"].special,
+		input[type="button"].special,
+		button.special,
+		.button.special {
+			border: none !important;
+		}
 
-	input[type="text"],
-	input[type="password"],
-	input[type="email"],
-	select {
-		height: 2.75em;
-		line-height: 2.75em;
-	}
+/* Tiles */
 
-	input[type="checkbox"] + label:before,
-	input[type="radio"] + label:before {
+	.tiles article > .image:before, .tiles article > .image:after {
 		display: none;
 	}
 
-/* Image */
-
-	.image {
-		position: relative;
-		-ms-behavior: url("assets/js/ie/PIE.htc");
-	}
-
-		.image:before, .image:after {
-			display: none !important;
-		}
-
-		.image img {
-			position: relative;
-			-ms-behavior: url("assets/js/ie/PIE.htc");
-		}
-
 /* Header */
 
-	#header {
-		background-image: url("../../images/bg.jpg");
-		background-repeat: no-repeat;
-		background-size: cover;
-		-ms-behavior: url("assets/js/ie/backgroundsize.min.htc");
+	#header .logo .symbol {
+		display: none;
 	}
 
-		#header h1 {
-			color: #ffffff;
+	#header nav ul li a[href="#menu"] {
+		text-indent: 0;
+		width: auto;
+		font-size: 0.8em;
+	}
+
+		#header nav ul li a[href="#menu"]:before, #header nav ul li a[href="#menu"]:after {
+			display: none;
 		}
 
 /* Footer */
 
-	#footer .icons a {
-		color: #ffffff;
+	#footer > .inner section {
+		width: 50%;
+		margin-left: 3em;
 	}
+
+		#footer > .inner section:first-child {
+			margin-left: 0;
+			width: 40%;
+		}

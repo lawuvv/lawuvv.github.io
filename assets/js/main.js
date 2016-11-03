@@ -1,59 +1,98 @@
 /*
-	Strata by HTML5 UP
+	Phantom by HTML5 UP
 	html5up.net | @ajlkn
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
 
 (function($) {
 
-	var settings = {
-
-		// Parallax background effect?
-			parallax: true,
-
-		// Parallax factor (lower = more intense, higher = less intense).
-			parallaxFactor: 20
-
-	};
-
 	skel.breakpoints({
-		xlarge: '(max-width: 1800px)',
-		large: '(max-width: 1280px)',
-		medium: '(max-width: 980px)',
-		small: '(max-width: 736px)',
-		xsmall: '(max-width: 480px)'
+		xlarge:	'(max-width: 1680px)',
+		large:	'(max-width: 1280px)',
+		medium:	'(max-width: 980px)',
+		small:	'(max-width: 736px)',
+		xsmall:	'(max-width: 480px)'
 	});
 
 	$(function() {
 
-		var $window = $(window),
-			$body = $('body'),
-			$header = $('#header'),
-			$footer = $('#footer'),
-			$main = $('#main');
+		var	$window = $(window),
+			$body = $('body');
 
 		// Disable animations/transitions until the page has loaded.
 			$body.addClass('is-loading');
 
 			$window.on('load', function() {
-				$body.removeClass('is-loading');
+				window.setTimeout(function() {
+					$body.removeClass('is-loading');
+				}, 100);
 			});
 
 		// Touch?
-			if (skel.vars.mobile) {
+			if (skel.vars.touch)
+				$body.addClass('is-touch');
 
-				// Turn on touch mode.
-					$body.addClass('is-touch');
+		// Forms.
+			var $form = $('form');
 
-				// Height fix (mostly for iOS).
-					window.setTimeout(function() {
-						$window.scrollTop($window.scrollTop() + 1);
-					}, 0);
+			// Auto-resizing textareas.
+				$form.find('textarea').each(function() {
 
-			}
+					var $this = $(this),
+						$wrapper = $('<div class="textarea-wrapper"></div>'),
+						$submits = $this.find('input[type="submit"]');
 
-		// Fix: Placeholder polyfill.
-			$('form').placeholder();
+					$this
+						.wrap($wrapper)
+						.attr('rows', 1)
+						.css('overflow', 'hidden')
+						.css('resize', 'none')
+						.on('keydown', function(event) {
+
+							if (event.keyCode == 13
+							&&	event.ctrlKey) {
+
+								event.preventDefault();
+								event.stopPropagation();
+
+								$(this).blur();
+
+							}
+
+						})
+						.on('blur focus', function() {
+							$this.val($.trim($this.val()));
+						})
+						.on('input blur focus --init', function() {
+
+							$wrapper
+								.css('height', $this.height());
+
+							$this
+								.css('height', 'auto')
+								.css('height', $this.prop('scrollHeight') + 'px');
+
+						})
+						.on('keyup', function(event) {
+
+							if (event.keyCode == 9)
+								$this
+									.select();
+
+						})
+						.triggerHandler('--init');
+
+					// Fix.
+						if (skel.vars.browser == 'ie'
+						||	skel.vars.mobile)
+							$this
+								.css('max-height', '10em')
+								.css('overflow-y', 'auto');
+
+				});
+
+			// Fix: Placeholder polyfill.
+				$form.placeholder();
 
 		// Prioritize "important" elements on medium.
 			skel.on('+medium -medium', function() {
@@ -63,70 +102,96 @@
 				);
 			});
 
-		// Footer.
-			skel.on('+medium', function() {
-				$footer.insertAfter($main);
-			});
+		// Menu.
+			var $menu = $('#menu');
 
-			skel.on('-medium !medium', function() {
-				$footer.appendTo($header);
-			});
+			$menu.wrapInner('<div class="inner"></div>');
 
-		// Header.
+			$menu._locked = false;
 
-			// Parallax background.
+			$menu._lock = function() {
 
-				// Disable parallax on IE (smooth scrolling is jerky), and on mobile platforms (= better performance).
-					if (skel.vars.browser == 'ie'
-					||	skel.vars.mobile)
-						settings.parallax = false;
+				if ($menu._locked)
+					return false;
 
-				if (settings.parallax) {
+				$menu._locked = true;
 
-					skel.on('change', function() {
+				window.setTimeout(function() {
+					$menu._locked = false;
+				}, 350);
 
-						if (skel.breakpoint('medium').active) {
+				return true;
 
-							$window.off('scroll.strata_parallax');
-							$header.css('background-position', 'top left, center center');
+			};
 
-						}
-						else {
+			$menu._show = function() {
 
-							$header.css('background-position', 'left 0px');
+				if ($menu._lock())
+					$body.addClass('is-menu-visible');
 
-							$window.on('scroll.strata_parallax', function() {
-								$header.css('background-position', 'left ' + (-1 * (parseInt($window.scrollTop()) / settings.parallaxFactor)) + 'px');
-							});
+			};
 
-						}
+			$menu._hide = function() {
 
-					});
+				if ($menu._lock())
+					$body.removeClass('is-menu-visible');
 
-					$window.on('load', function() {
-						$window.triggerHandler('scroll');
-					});
+			};
 
-				}
+			$menu._toggle = function() {
 
-		// Main Sections: Two.
+				if ($menu._lock())
+					$body.toggleClass('is-menu-visible');
 
-			// Lightbox gallery.
-				$window.on('load', function() {
+			};
 
-					$('#two').poptrox({
-						caption: function($a) { return $a.next('h3').text(); },
-						overlayColor: '#2c2c2c',
-						overlayOpacity: 0.85,
-						popupCloserText: '',
-						popupLoaderText: '',
-						selector: '.work-item a.image',
-						usePopupCaption: true,
-						usePopupDefaultStyling: false,
-						usePopupEasyClose: false,
-						usePopupNav: true,
-						windowMargin: (skel.breakpoint('small').active ? 0 : 50)
-					});
+			$menu
+				.appendTo($body)
+				.on('click', function(event) {
+					event.stopPropagation();
+				})
+				.on('click', 'a', function(event) {
+
+					var href = $(this).attr('href');
+
+					event.preventDefault();
+					event.stopPropagation();
+
+					// Hide.
+						$menu._hide();
+
+					// Redirect.
+						if (href == '#menu')
+							return;
+
+						window.setTimeout(function() {
+							window.location.href = href;
+						}, 350);
+
+				})
+				.append('<a class="close" href="#menu">Close</a>');
+
+			$body
+				.on('click', 'a[href="#menu"]', function(event) {
+
+					event.stopPropagation();
+					event.preventDefault();
+
+					// Toggle.
+						$menu._toggle();
+
+				})
+				.on('click', function(event) {
+
+					// Hide.
+						$menu._hide();
+
+				})
+				.on('keydown', function(event) {
+
+					// Hide on escape.
+						if (event.keyCode == 27)
+							$menu._hide();
 
 				});
 
